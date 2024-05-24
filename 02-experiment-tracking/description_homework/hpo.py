@@ -1,3 +1,5 @@
+NAME_EXPERIMENT = 'rf-hyperopt'
+
 import os
 import pickle
 import click
@@ -12,7 +14,6 @@ def load_pickle(filename: str):
     with open(filename, "rb") as f_in:
         return pickle.load(f_in)
 
-
 @click.command()
 @click.option(
     "--data_path",
@@ -25,23 +26,26 @@ def load_pickle(filename: str):
     help="The number of parameter evaluations for the optimizer to explore"
 )
 def run_optimization(data_path: str, num_trials: int):
-
+    # Set the MLflow tracking URI
     mlflow.set_tracking_uri('sqlite:///mlflow.db')
-    mlflow.set_experiment("rf-hyperopt")
+
+    # Set the experiment
+    mlflow.set_experiment(NAME_EXPERIMENT)
 
     X_train, y_train = load_pickle(os.path.join(data_path, "train.pkl"))
     X_val, y_val = load_pickle(os.path.join(data_path, "val.pkl"))
 
     def objective(params):
         with mlflow.start_run():
-            mlflow.set_tag("model", "rf")
-            mlflow.log_params(params)
-
             rf = RandomForestRegressor(**params)
             rf.fit(X_train, y_train)
             y_pred = rf.predict(X_val)
             rmse = root_mean_squared_error(y_val, y_pred)
+
+            mlflow.set_tag("model", "rf")
+            mlflow.log_params(params)
             mlflow.log_metric("rmse", rmse)
+
         return {'loss': rmse, 'status': STATUS_OK}
 
     search_space = {

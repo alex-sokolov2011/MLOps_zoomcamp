@@ -1,3 +1,5 @@
+EXPERIMENT_NAME = 'green-taxi-experiment-hw2'
+
 import os
 import pickle
 import click
@@ -26,25 +28,27 @@ def run_train(data_path: str):
     mlflow.set_tracking_uri('sqlite:///mlflow.db')
 
     # Set the experiment
-    mlflow.set_experiment('green-taxi-experiment-hw2')
+    mlflow.set_experiment(EXPERIMENT_NAME)
 
-    # Enable MLflow autologging without logging datasets
-    mlflow.sklearn.autolog(log_input_examples=False, log_model_signatures=False)
+    # Enable MLflow autologging
+    mlflow.sklearn.autolog()
 
     X_train, y_train = load_pickle(os.path.join(data_path, "train.pkl"))
     X_val, y_val = load_pickle(os.path.join(data_path, "val.pkl"))
 
     with mlflow.start_run():  # wrap train with mlflow
-        print("Starting experiment")
+        print(f'Starting experiment {EXPERIMENT_NAME}')
         rf = RandomForestRegressor(max_depth=10, random_state=0)
         rf.fit(X_train, y_train)
         y_pred = rf.predict(X_val)
 
         rmse = root_mean_squared_error(y_val, y_pred)
-        # Log RMSE as a metric
-        mlflow.log_metric("rmse", rmse)
+        mlflow.log_metric("rmse", rmse)  # Log RMSE as a metric
 
         print("Experiment finished")
+
+    # Disable autologging to avoid potential issues
+    mlflow.sklearn.autolog(disable=True)
 
 if __name__ == '__main__':
     run_train()
