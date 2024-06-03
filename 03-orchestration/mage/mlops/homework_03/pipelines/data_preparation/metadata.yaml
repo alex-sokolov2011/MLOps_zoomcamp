@@ -6,36 +6,37 @@ blocks:
       path: homework_03/data_loaders/ingest.py
   downstream_blocks:
   - summary_overview_for_ingest
-  - cleaning
+  - clean_outliers
   executor_config: null
   executor_type: local_python
   has_callback: false
   language: python
   name: Ingest
   retry_config: null
-  status: executed
+  status: updated
   timeout: null
   type: data_loader
   upstream_blocks: []
   uuid: ingest
-- all_upstream_blocks_executed: true
+- all_upstream_blocks_executed: false
   color: null
   configuration:
     file_source:
-      path: homework_03/transformers/cleaning.py
-  downstream_blocks: []
+      path: homework_03/transformers/clean_outliers.py
+  downstream_blocks:
+  - summary_overview_for_clean_outliers
   executor_config: null
   executor_type: local_python
   has_callback: false
   language: python
-  name: Cleaning
+  name: Clean_outliers
   retry_config: null
-  status: executed
+  status: updated
   timeout: null
   type: transformer
   upstream_blocks:
   - ingest
-  uuid: cleaning
+  uuid: clean_outliers
 cache_block_output_in_memory: false
 callbacks: []
 concurrency_config: {}
@@ -62,9 +63,11 @@ spark_config: {}
 tags: []
 type: python
 uuid: data_preparation
+variables:
+  max_size_df: 1000
 variables_dir: /home/src/mage_data/homework_03
 widgets:
-- all_upstream_blocks_executed: true
+- all_upstream_blocks_executed: false
   color: null
   configuration:
     chart_type: table
@@ -85,3 +88,24 @@ widgets:
   upstream_blocks:
   - ingest
   uuid: summary_overview_for_ingest
+- all_upstream_blocks_executed: false
+  color: null
+  configuration:
+    chart_type: table
+    height: 3000
+    index: stats
+    x: headers
+    y: rows
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: summary overview for clean_outliers
+  retry_config: null
+  status: executed
+  timeout: null
+  type: chart
+  upstream_blocks:
+  - clean_outliers
+  uuid: summary_overview_for_clean_outliers

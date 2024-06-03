@@ -29,6 +29,13 @@ def ingest_files(**kwargs) -> pd.DataFrame:
             dfs.append(df)
             del df
             gc.collect() 
-    df = pd.concat(dfs)
+
+    max_size_df = kwargs.get('max_size_df')
+    if max_size_df > 0:
+        df = pd.concat(dfs)[:max_size_df]
+    else:
+        df = pd.concat(dfs)
+
     print(len(df))
+
     return df
