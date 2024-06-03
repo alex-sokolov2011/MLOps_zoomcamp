@@ -40,13 +40,16 @@ How many records did we load?
 ## Question 4. Data preparation
 
 
-Let's use the same logic for preparing the data we used previously. We will need to create a tranformer code block and put this code there.
+Let's use the same logic for preparing the data we used previously. We will need to create a transformer code block and put this code there.
 
 This is what we used (adjusted for yellow dataset):
 
 ```python
 def read_dataframe(filename):
     df = pd.read_parquet(filename)
+
+    df.tpep_dropoff_datetime = pd.to_datetime(df.tpep_dropoff_datetime)
+    df.tpep_pickup_datetime = pd.to_datetime(df.tpep_pickup_datetime)
 
     df['duration'] = df.tpep_dropoff_datetime - df.tpep_pickup_datetime
     df.duration = df.duration.dt.total_seconds() / 60
@@ -55,7 +58,7 @@ def read_dataframe(filename):
 
     categorical = ['PULocationID', 'DOLocationID']
     df[categorical] = df[categorical].astype(str)
-    
+
     return df
 ```
 
@@ -66,7 +69,7 @@ What's the size of the result?
 
 - 2,903,766
 - 3,103,766
-- 3,316,216 
+- 3,316,216
 - 3,503,766
 
 ## Question 5. Train a model
@@ -77,7 +80,7 @@ We will now train a linear regression model using the same code as in homework 1
 * Train a linear regression with default parameres 
 * Use pick up and drop off locations separately, don't create a combination feature
 
-Let's now use it in the pipeline. We will need to create another tranformation block, and return both the dict vectorizer and the model
+Let's now use it in the pipeline. We will need to create another transformation block, and return both the dict vectorizer and the model
 
 What's the intercept of the model? 
 
@@ -90,7 +93,7 @@ Hint: print the `intercept_` field in the code block
 
 ## Question 6. Register the model 
 
-The model is traned, so let's save it with MLFlow.
+The model is trained, so let's save it with MLFlow.
 
 If you run mage with docker-compose, stop it with Ctrl+C or 
 
