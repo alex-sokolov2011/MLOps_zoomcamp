@@ -8,7 +8,7 @@ import pandas as pd
 if 'data_loader' not in globals():
     from mage_ai.data_preparation.decorators import data_loader
 
-LOAD_COLUMNS = ['tpep_pickup_datetime', 'tpep_dropoff_datetime', 'PULocationID', 'DOLocationID', 'trip_distance' ]
+LOAD_COLUMNS = ['tpep_pickup_datetime', 'tpep_dropoff_datetime', 'PULocationID', 'DOLocationID']
 
 @data_loader
 def ingest_files(**kwargs) -> pd.DataFrame:
