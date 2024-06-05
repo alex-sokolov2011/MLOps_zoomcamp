@@ -45,7 +45,7 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - /home/aleksandr/GitHub/MLOps_zoomcamp/03-orchestration/mage/mlflow:/home/mlflow/
+      - "${PWD}/mlflow:/home/mlflow/"
     networks:
       - app-network
 networks:
