@@ -1,10 +1,11 @@
 from typing import Callable, Dict, Tuple, Union
 
+import mlflow
+import mlflow.sklearn
+from sklearn.linear_model import LinearRegression
+
 from pandas import Series
 from scipy.sparse._csr import csr_matrix
-from sklearn.base import BaseEstimator
-
-from mlops.utils.models.hw3_sklearn import load_class, train_model
 
 if 'transformer' not in globals():
     from mage_ai.data_preparation.decorators import transformer
@@ -13,7 +14,6 @@ if 'transformer' not in globals():
 @transformer
 def default_training(
     training_set: Dict[str, Union[Series, csr_matrix]],
-    model_class_name: str,
     *args,
     **kwargs,
 ) -> Tuple[
@@ -22,10 +22,9 @@ def default_training(
     csr_matrix,
     Series,
     Callable[..., BaseEstimator],
-    object
 ]:
 
-    X, y, dv = training_set['encoder']
+    X, y, _ = training_set['encoder']
     
     model_class = load_class(model_class_name)
     model, metrics, y_pred = train_model(
@@ -46,4 +45,4 @@ def default_training(
     parameters['rmse_train'] = metrics['rmse']
     
     
-    return model, parameters, X, y, dict(cls=model_class, name=model_class_name), dv
+    return model, parameters, X, y, dict(cls=model_class, name=model_class_name)
