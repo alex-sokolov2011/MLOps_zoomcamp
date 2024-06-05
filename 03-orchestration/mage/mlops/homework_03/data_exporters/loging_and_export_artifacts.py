@@ -32,7 +32,13 @@ def export_data(data, *args, **kwargs):
         path = 'dv.pkl'
         with open(path, 'wb') as f:
             pickle.dump(dv, f)
-        mlflow.log_artifact(path, "artifacts")
+        mlflow.log_artifact(path, artifact_path="artifacts")
+
+        path = 'model.pkl'
+        with open(path, 'wb') as f:
+            pickle.dump(model, f)
+        
+        mlflow.log_artifact(path, artifact_path="artifacts")
         print("Experiment finished")
     
     # Disable autologging to avoid potential issues
