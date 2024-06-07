@@ -46,6 +46,7 @@ services:
       - "5000:5000"
     volumes:
       - "${PWD}/mlflow:/home/mlflow/"
+      - "${PWD}/mlflow/artifacts:/home/mlflow/artifacts"
     networks:
       - app-network
 networks:

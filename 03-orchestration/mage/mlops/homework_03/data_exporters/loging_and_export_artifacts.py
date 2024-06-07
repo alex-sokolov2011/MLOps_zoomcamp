@@ -2,14 +2,15 @@ import mlflow
 from mlflow.entities import ViewType
 from mlflow.tracking import MlflowClient
 import json
+import os
 
 import pickle
 
 if 'data_exporter' not in globals():
     from mage_ai.data_preparation.decorators import data_exporter
 
-EXPERIMENT_NAME = "hw3-exp-yellow-taxi-linreg"
 MLFLOW_TRACKING_URI = "http://mlflow:5000"
+EXPERIMENT_NAME = "hw3-exp-yellow-taxi"
 
 @data_exporter
 def export_data(data, *args, **kwargs):
@@ -20,35 +21,40 @@ def export_data(data, *args, **kwargs):
 
     # Set MLFlow tracking URI and experiment name
     mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
-    mlflow.set_experiment(EXPERIMENT_NAME)
-    mlflow.sklearn.autolog()
 
-    with mlflow.start_run():
+    client = MlflowClient(tracking_uri=MLFLOW_TRACKING_URI)
+    experiment = client.get_experiment_by_name(EXPERIMENT_NAME)
+    if experiment is None or experiment.lifecycle_stage == 'deleted':
+        new_experiment_id = client.create_experiment(
+            EXPERIMENT_NAME,
+            artifact_location="/home/mlflow/artifacts"
+        )
+    else:
+        new_experiment_id = experiment.experiment_id
+
+    mlflow.sklearn.autolog()
+    
+    with mlflow.start_run(experiment_id = new_experiment_id):
         print(f'Starting experiment {EXPERIMENT_NAME}')
         # Log the model to MLFlow
         mlflow.sklearn.log_model(model, "linreg_default")
 
         # Save and log the artifact 
-        path = 'dv.pkl'
+        path = './mlflow/artifacts/dv.pkl'
         with open(path, 'wb') as f:
             pickle.dump(dv, f)
-        mlflow.log_artifact(path, artifact_path="artifacts")
+        mlflow.log_artifact(path, "atifacts")
 
-        path = 'model.pkl'
+        path = './mlflow/models/model.pkl'
         with open(path, 'wb') as f:
             pickle.dump(model, f)
-        
-        mlflow.log_artifact(path, artifact_path="artifacts")
+        mlflow.log_artifact(path, 'models')
         print("Experiment finished")
     
     # Disable autologging to avoid potential issues
     mlflow.sklearn.autolog(disable=True)
     
-    client = MlflowClient(tracking_uri=MLFLOW_TRACKING_URI)
-
     # Retrieve the top_n model runs and log the models
-    experiment = client.get_experiment_by_name(EXPERIMENT_NAME)
-
     last_runs = client.search_runs(
         experiment_ids=experiment.experiment_id,
         run_view_type=ViewType.ACTIVE_ONLY,
