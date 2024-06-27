@@ -1,8 +1,5 @@
-# Specifies the Docker Compose file version
-version: '3.7'
-
 # Declares volumes that can be used by services in the Docker Compose file
-volumes: 
+volumes:
   # Declares a volume named grafana_data
   grafana_data: {}
 
@@ -28,6 +25,8 @@ services:
     # Maps ports between the host and the container
     ports:
       - "5433:5432"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
     # Specifies the networks that this service is part of
     networks:
       - back-tier
@@ -41,7 +40,7 @@ services:
 
     networks:
       - back-tier
-      - front-tier  
+      - front-tier
 
   # Defines a service named grafana
   grafana:
@@ -55,7 +54,7 @@ services:
       # Maps a local file to a file inside the container, and makes it read-only
       - ./config/grafana_datasources.yaml:/etc/grafana/provisioning/datasources/datasource.yaml:ro
       - ./config/grafana_dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml:ro
-      - ./dashboards:/opt/grafana/dashboards      
+      - ./dashboards:/opt/grafana/dashboards
 
     networks:
       - back-tier

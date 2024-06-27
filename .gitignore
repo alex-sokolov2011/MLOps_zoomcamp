@@ -2,3 +2,4 @@
 02-experiment-tracking/mlruns/
 02-experiment-tracking/read_mlflow_mlruns.ipynb
 05-monitoring/baseline_model_nyc_taxi_data.ipynb
+05-monitoring/data/postgres/

@@ -4,16 +4,14 @@ apiVersion: 1
 # Defines the data sources that Grafana should connect to
 datasources:
   # Defines a data source
-  - 
-    # Specifies the name of the data source
-    name: PostgreSQL
+  - name: hw5-postgresql
     # Specifies the type of the data source
     type: postgres
     # Specifies how Grafana should access the data source
     # The 'proxy' mode means that all requests are proxied via the Grafana backend/server
     access: proxy
     # Specifies the URL (including the port number) of the data source
-    url: 172.24.0.1:5433
+    url: db:5432
     # Specifies the name of the database that Grafana should connect to
     database: test
     # Specifies the username that Grafana should use to connect to the database
@@ -26,3 +24,4 @@ datasources:
     jsonData:
       # Disables SSL mode for the database connection
       sslmode: 'disable'
+      database: test
