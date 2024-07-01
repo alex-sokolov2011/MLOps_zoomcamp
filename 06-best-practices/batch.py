@@ -14,17 +14,19 @@ def generate_output_file_path(year, month):
  return f'./output/yellow_tripdata_{year:04d}-{month:02d}.parquet'
 
 
-def read_data(filename, categorical):
-    df = pd.read_parquet(filename)
-
+def prepare_data(df, categorical):
     df['duration'] = df.tpep_dropoff_datetime - df.tpep_pickup_datetime
     df['duration'] = df.duration.dt.total_seconds() / 60
-
     df = df[(df.duration >= 1) & (df.duration <= 60)].copy()
 
     df[categorical] = df[categorical].fillna(-1).astype('int').astype('str')
-
     return df, categorical
+
+
+def read_data(filename, categorical):
+    df = pd.read_parquet(filename)
+    return prepare_data(df, categorical)
+
 
 @click.command()
 @click.option(
@@ -53,7 +55,6 @@ def main(year, month):
     y_pred = lr.predict(X_val)
 
     print('predicted mean duration:', y_pred.mean())
-
 
     df_result = pd.DataFrame()
     df_result['ride_id'] = df['ride_id']
