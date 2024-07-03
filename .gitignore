@@ -3,3 +3,8 @@
 05-monitoring/baseline_model_nyc_taxi_data.ipynb
 05-monitoring/data/postgres/
 **/__pycache__/
+06-best-practices/localstack/*
+06-best-practices/localstack/cache/*
+!06-best-practices/localstack/cache/
+!06-best-practices/localstack/cache/machine.json
+

@@ -1,6 +1,7 @@
 import pandas as pd
 from datetime import datetime
 import numpy as np
+from IPython.display import display
 
 from batch import prepare_data
 
@@ -23,7 +24,7 @@ def prepare_test_data():
     categorical = ['PULocationID', 'DOLocationID']
 
     prepared_test_df, categorical = prepare_data(test_df, categorical)
-    print(prepared_test_df)
+    display(prepared_test_df[['PULocationID', 'DOLocationID', 'duration']])
 
     expected_prepared_test_df = [
         ('-1', '-1', 9.),
